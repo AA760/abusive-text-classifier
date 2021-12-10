@@ -18,7 +18,9 @@ data = pd.read_csv(r"C:\Users\user\Documents\Python\FYP\FYP\test_X.csv",sep=',')
 y = pd.read_csv(r"C:\Users\user\Documents\Python\FYP\FYP\test_y.csv",sep=',')
 
 #class distribution
+print("Class distribution:")
 print(y.value_counts())
+print("")
 
 def remove_punctuation(text):
     punctuationfree="".join([i for i in text if i not in string.punctuation])
@@ -40,7 +42,7 @@ data['lowcase'] = data['nopunc'].apply(lambda x: x.lower())
 data['nostop'] = data['lowcase'].apply(lambda x: ' '.join([word for word in x.split() if word not in (stop)]))
 
 #remove numbers
-data['nonum'] = data['nostop'].str.replace('\d+', '')
+data['nonum'] = data['nostop'].str.replace('\d+', '',regex=True)
 
 #tokenize + lemmatization
 data['lemmatized'] = data.nonum.apply(lemmatize_text)
@@ -49,12 +51,17 @@ data['lemmatized'] = data.nonum.apply(lemmatize_text)
 data['untokenized'] = data.lemmatized.apply(lambda x:TreebankWordDetokenizer().detokenize(x))
 
 #vectorize
-tfidf = TfidfVectorizer(max_features=2000,max_df=0.5,min_df=10,ngram_range=(1,2))
-features = tfidf.fit_transform(data.untokenized)
+with open(r'C:\Users\user\Documents\Python\FYP\FYP\Pickle\text_vectorizer', 'rb') as text_vectorizer:
+    tfidf = pickle.load(text_vectorizer)
+    print("Imported vectorizer.")
+    print("")
+features = tfidf.transform(data.untokenized)
 
-with open('text_classifier', 'rb') as training_model:
+
+with open(r'C:\Users\user\Documents\Python\FYP\FYP\Pickle\text_classifier', 'rb') as training_model:
     model = pickle.load(training_model)
     print("Imported model. Testing...")
+    print("")
 
 y_pred = model.predict(features)
 print("Testing complete.")
