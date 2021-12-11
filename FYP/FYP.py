@@ -16,8 +16,9 @@ import pickle
 from imblearn import under_sampling
 from imblearn import over_sampling
 from sklearn import svm
+from sklearn.naive_bayes import MultinomialNB
 
-data = pd.read_csv(r"C:/Users/user/Desktop/Datasets/jigsaw-toxic-comment-classification-challenge/train.csv/processed_train.csv",sep=',')
+data = pd.read_csv(r"C:\Users\user\Documents\Python\FYP\FYP\processed_train.csv",sep=',')
 y = data.abusive
 
 
@@ -55,7 +56,7 @@ data['lemmatized'] = data.nonum.apply(lemmatize_text)
 data['untokenized'] = data.lemmatized.apply(lambda x:TreebankWordDetokenizer().detokenize(x))
 
 #vectorize - keep increasing features from 50k
-tfidf = TfidfVectorizer(max_features=50000,max_df=0.5,min_df=1,ngram_range=(1,2))
+tfidf = TfidfVectorizer(max_features=110000,max_df=0.5,min_df=1,ngram_range=(1,2))
 features = tfidf.fit_transform(data.untokenized)
 #c = pd.DataFrame(features.todense(),columns=tfidf.get_feature_names_out())
 #print(c)
@@ -72,7 +73,6 @@ print("")
 
 
 classifier = RandomForestClassifier(n_estimators=100, random_state=0,n_jobs=8)
-#classifier = svm.SVC()
 classifier.fit(features, y.values.ravel())
 print("Model trained. Exporting...")
 print("")
