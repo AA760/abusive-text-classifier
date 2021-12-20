@@ -11,16 +11,24 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
 import pickle
+from collections import Counter
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences 
+from keras.models import Sequential,load_model
+from keras.layers import Embedding, LSTM, Dense, Dropout, Flatten, TextVectorization, Bidirectional, Input
+from keras.optimizers import adam_v2
+from imblearn import over_sampling, under_sampling
+import numpy as np
+import tensorflow as tf
+from sklearn.decomposition import TruncatedSVD
+from sklearn.feature_selection import SelectKBest
+from numpy import array, asarray, zeros
 
-data = pd.read_csv(r"C:\Users\user\Documents\Python\FYP\FYP\test_X.csv",sep=',')
-y = pd.read_csv(r"C:\Users\user\Documents\Python\FYP\FYP\test_y.csv",sep=',')
+dataT = pd.read_csv(r"C:\Users\abdul\OneDrive\Documents\Python\FYP\FYP\test_X.csv",sep=',')
+yT = pd.read_csv(r"C:\Users\abdul\OneDrive\Documents\Python\FYP\FYP\test_y.csv",sep=',')
 
-#class distribution
-print("Class distribution:")
-print(y.value_counts())
-print("")
 
 def remove_punctuation(text):
     punctuationfree="".join([i for i in text if i not in string.punctuation])
@@ -31,41 +39,39 @@ def lemmatize_text(text):
     lemmatizer = nltk.stem.WordNetLemmatizer()
     return [lemmatizer.lemmatize(w) for w in w_tokenizer.tokenize(text)]
 
+
 #remove punctuation
-data['nopunc'] = data['comment_text'].apply(lambda x:remove_punctuation(x))
-data.head()
+dataT.comment_text = dataT.comment_text.apply(lambda x:remove_punctuation(x))
 
 #all lowercase
-data['lowcase'] = data['nopunc'].apply(lambda x: x.lower())
+dataT.comment_text = dataT.comment_text.apply(lambda x: x.lower())
 
 #remove stopwords
-data['nostop'] = data['lowcase'].apply(lambda x: ' '.join([word for word in x.split() if word not in (stop)]))
+dataT.comment_text = dataT.comment_text.apply(lambda x: ' '.join([word for word in x.split() if word not in (stop)]))
 
 #remove numbers
-data['nonum'] = data['nostop'].str.replace('\d+', '',regex=True)
+dataT.comment_text = dataT.comment_text.str.replace('\d+', '',regex=True)
 
 #tokenize + lemmatization
-data['lemmatized'] = data.nonum.apply(lemmatize_text)
+dataT.comment_text = dataT.comment_text.apply(lemmatize_text)
 
 #untokenize
-data['untokenized'] = data.lemmatized.apply(lambda x:TreebankWordDetokenizer().detokenize(x))
+dataT.comment_text = dataT.comment_text.apply(lambda x:TreebankWordDetokenizer().detokenize(x))
 
-#vectorize
-with open(r'C:\Users\user\Documents\Python\FYP\FYP\Pickle\text_vectorizer', 'rb') as text_vectorizer:
-    tfidf = pickle.load(text_vectorizer)
-    print("Imported vectorizer.")
-    print("")
-features = tfidf.transform(data.untokenized)
+##testing the model
+model = load_model('nn_model/')
 
+prediction = model.predict(dataT.comment_text)
+prediction = [1 if p > 0.5 else 0 for p in prediction]
 
-with open(r'C:\Users\user\Documents\Python\FYP\FYP\Pickle\text_classifier', 'rb') as training_model:
-    model = pickle.load(training_model)
-    print("Imported model. Testing...")
-    print("")
+accuracy = accuracy_score(yT, prediction)
+print('Accuracy: %f' % accuracy)
 
-y_pred = model.predict(features)
-print("Testing complete.")
+precision = precision_score(yT, prediction)
+print('Precision: %f' % precision)
 
-print(confusion_matrix(y, y_pred))
-print(classification_report(y, y_pred))
-print(accuracy_score(y, y_pred))
+recall = recall_score(yT, prediction)
+print('Recall: %f' % recall)
+
+f1 = f1_score(yT, prediction)
+print('F1 score: %f' % f1)
