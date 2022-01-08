@@ -1,0 +1,85 @@
+import pandas as pd
+import nltk
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
+stop = stopwords.words('english')
+from nltk.tokenize.treebank import TreebankWordDetokenizer
+from keras.models import load_model
+import string
+import pickle
+from keras.preprocessing.sequence import pad_sequences 
+
+#d = {'comment_text': [input("Enter text:")]}
+#input = pd.DataFrame(data=d)
+input = input("Enter text:")
+
+def remove_punctuation(text):
+    punctuationfree="".join([i for i in text if i not in string.punctuation])
+    return punctuationfree
+
+def lemmatize_text(text):
+    w_tokenizer = nltk.tokenize.WhitespaceTokenizer()
+    lemmatizer = nltk.stem.WordNetLemmatizer()
+    return [lemmatizer.lemmatize(w) for w in w_tokenizer.tokenize(text)]
+
+
+#remove punctuation
+input = remove_punctuation(input)
+
+#all lowercase
+input = input.lower()
+
+#remove stopwords
+#input = input.apply(lambda x: ' '.join([word for word in x.str.split() if word not in (stop)]))
+
+#remove numbers
+input = input.replace('\d+', ' ')
+
+#tokenize + lemmatization
+input = lemmatize_text(input)
+
+#untokenize
+input = TreebankWordDetokenizer().detokenize(input)
+
+#remove single characters
+input = input.replace('\s+[a-zA-Z]\s+', ' ')
+
+#remove multiple spaces
+input = input.replace('\s+', ' ')
+
+#convert to pd dataframe
+input = pd.DataFrame({'comment_text': [input]})
+
+#tokenize
+with open(r'C:\Users\abdul\OneDrive\Documents\Python\FYP\FYP\Pickle\keras_tokenizer', 'rb') as keras_tokenizer:
+    tokenizer = pickle.load(keras_tokenizer)
+
+features = tokenizer.texts_to_sequences(input.comment_text)
+features_padded = pad_sequences(features, maxlen=100, padding="post", truncating="post")
+
+print(features_padded)
+
+#tokenize
+#input = nltk.tokenize.WhitespaceTokenizer().tokenize(input)
+
+#remove stopwords
+#input = [w for w in input if not w.lower() in stop]
+
+#lemmatize
+#input = ' '.join([nltk.stem.WordNetLemmatizer().lemmatize(words) for words in input])
+#print(input)
+
+##convert to pd dataframe
+#input = pd.DataFrame({'comment_text': [input]})
+
+
+##testing the model
+model = load_model('nn_model_embeddings2/')
+
+preds = model.predict(features_padded)
+preds[preds>=0.5] = 1
+preds[preds<0.5] = 0
+
+print(preds)
+
+

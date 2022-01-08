@@ -364,3 +364,9 @@ FodyWeavers.xsd
 /FYP/Pickle
 /FYP/glove_twitter
 /FYP/nn_model
+/FYP/glove_wiki
+/FYP/tokenizer.json
+/FYP/tokenizer2.json
+/FYP/nn_model_embeddings2(js)
+/FYP/nn_model_embeddings(js)
+/FYP/nn_model_embeddings2

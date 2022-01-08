@@ -46,8 +46,8 @@ dataT.comment_text = dataT.comment_text.apply(lambda x:remove_punctuation(x))
 #all lowercase
 dataT.comment_text = dataT.comment_text.apply(lambda x: x.lower())
 
-#remove stopwords
-dataT.comment_text = dataT.comment_text.apply(lambda x: ' '.join([word for word in x.split() if word not in (stop)]))
+##remove stopwords
+#dataT.comment_text = dataT.comment_text.apply(lambda x: ' '.join([word for word in x.split() if word not in (stop)]))
 
 #remove numbers
 dataT.comment_text = dataT.comment_text.str.replace('\d+', '',regex=True)
@@ -58,20 +58,30 @@ dataT.comment_text = dataT.comment_text.apply(lemmatize_text)
 #untokenize
 dataT.comment_text = dataT.comment_text.apply(lambda x:TreebankWordDetokenizer().detokenize(x))
 
+with open(r'C:\Users\abdul\OneDrive\Documents\Python\FYP\FYP\Pickle\text_vectorizer', 'rb') as text_vectorizer:
+    tfidf = pickle.load(text_vectorizer)
+    print("Imported vectorizer.")
+    print("")
+
+features = tfidf.transform(dataT.comment_text)
+
+with open(r'C:\Users\abdul\OneDrive\Documents\Python\FYP\FYP\Pickle\feature_selector', 'rb') as feature_selector:
+    selector = pickle.load(feature_selector)
+    print("Imported feature_selector.")
+    print("")
+
+features = selector.transform(features)
+
+
 ##testing the model
-model = load_model('nn_model/')
+with open(r'C:\Users\abdul\OneDrive\Documents\Python\FYP\FYP\Pickle\text_classifier', 'rb') as training_model:
+    model = pickle.load(training_model)
+    print("Imported model. Testing...")
+    print("")
 
-prediction = model.predict(dataT.comment_text)
-prediction = [1 if p > 0.5 else 0 for p in prediction]
+y_pred = model.predict(features)
+print("Testing complete.")
 
-accuracy = accuracy_score(yT, prediction)
-print('Accuracy: %f' % accuracy)
-
-precision = precision_score(yT, prediction)
-print('Precision: %f' % precision)
-
-recall = recall_score(yT, prediction)
-print('Recall: %f' % recall)
-
-f1 = f1_score(yT, prediction)
-print('F1 score: %f' % f1)
+print(confusion_matrix(yT, y_pred))
+print(classification_report(yT, y_pred))
+print(accuracy_score(yT, y_pred))

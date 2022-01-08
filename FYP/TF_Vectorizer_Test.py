@@ -51,7 +51,7 @@ input = input("Enter text:")
 input = nltk.tokenize.WhitespaceTokenizer().tokenize(input)
 
 #remove stopwords
-input = [w for w in input if not w.lower() in stop]
+#input = [w for w in input if not w.lower() in stop]
 
 #lemmatize
 input = ' '.join([nltk.stem.WordNetLemmatizer().lemmatize(words) for words in input])
