@@ -370,3 +370,16 @@ FodyWeavers.xsd
 /FYP/nn_model_embeddings2(js)
 /FYP/nn_model_embeddings(js)
 /FYP/nn_model_embeddings2
+/FYP/Data/Binary/processed_train.csv
+/FYP/Data/Binary/test_y.csv
+/FYP/Data/Binary/test_X.csv
+/FYP/Data/Multi
+/FYP/LSTM_embed(B)/model
+/FYP/LSTM_GloVe(M)/model
+/FYP/LSTM_GloVe(M)/model(js)
+/FYP/LSTM_GloVe(M)/tokenizer.json
+/FYP/LSTM_GloVe(M)/keras_tokenizer
+/FYP/LSTM_tfidf(B)/model
+/FYP/LSTM_tfidf(M)/model
+/FYP/RF_tfidf(B)/model
+/FYP/RF_tfidf(B)/tfidf_vectorizer
