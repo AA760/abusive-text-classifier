@@ -14,11 +14,24 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import psycopg2
 
+#importing data
+psgdb = psycopg2.connect(host="localhost", database="datasets", user="postgres", password="atc9310")
 
-test_X = pd.read_csv(r"..\Data\Binary\test_X.csv",sep=',').comment_text
-test_y = pd.read_csv(r"..\Data\Binary\test_y.csv",sep=',')
+c = psgdb.cursor()
+c.execute("SELECT comment_text, abusive FROM bTest")
 
+table = c.fetchall()
+c.close()
+
+data = pd.DataFrame(table, columns =['comment_text', 'abusive'])
+data['abusive'] = data['abusive'].replace(True,1)
+data['abusive'] = data['abusive'].replace(False,0)
+
+data.sample(frac=1)
+test_X = data.comment_text
+test_y = data.abusive
 
 
 #cleaning text
@@ -85,7 +98,7 @@ test_X = clean(test_X)
 
 
 #vectorize text
-with open(r'..\RF_sklearn\tfidf_vectorizer', 'rb') as tfidf:
+with open(r'./tfidf_vectorizer', 'rb') as tfidf:
     tfidf = pickle.load(tfidf)
     print("Imported vectorizer.")
     print("")
@@ -93,7 +106,7 @@ test_X = tfidf.transform(test_X)
 
 
 #predict with model
-with open(r'..\RF_sklearn\model', 'rb') as model:
+with open(r'./model', 'rb') as model:
     model = pickle.load(model)
     print("Imported model. Testing...")
     print("")
