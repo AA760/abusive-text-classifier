@@ -14,9 +14,21 @@ from sklearn.utils import class_weight
 import numpy as np
 import seaborn as sns
 import matplotlib as plt
+import psycopg2
 
 #importing data
-data = pd.read_csv(r"..\Data\Binary\processed_train.csv",sep=',')
+psgdb = psycopg2.connect(host="localhost", database="datasets", user="postgres", password="atc9310")
+
+c = psgdb.cursor()
+c.execute("SELECT comment_text, abusive FROM bTrain")
+
+table = c.fetchall()
+c.close()
+
+data = pd.DataFrame(table, columns =['comment_text', 'abusive'])
+data['abusive'] = data['abusive'].replace(True,1)
+data['abusive'] = data['abusive'].replace(False,0)
+
 data.sample(frac=1)
 X = data.comment_text
 y = data.abusive
