@@ -1,4 +1,4 @@
-# Abusive Text Classifier
+# Abusive text classifier
 
 A client-server approach to censoring abusive text in your web browser.
 
@@ -50,6 +50,6 @@ Now, launch your Chromium browser extension and navigate to the extensions page.
 
 Ensure the "Developer Mode" toggle in the top right is on. Then click the "Load unpacked" button. Navigate to the ****abusive-text-classifier\chrome-extension**** directory and click "Select Folder". 
 
-A new extension card will appear named "Abusive Text Classifier". Ensure that the bottom-right toggle is set to on. 
+A new extension card will appear named "Abusive text classifier". Ensure that the bottom-right toggle is set to on. 
 
 You should now be able to visit any webpage as normal and see abusive text be censored in real-time. By default, the server is set to debug mode and you will be able to see text logs in the server terminal if you are interested. 

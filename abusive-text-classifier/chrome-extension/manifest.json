@@ -1,6 +1,6 @@
 {
 	"manifest_version": 2,
-	"name": "Abusive Text Classifier",
+	"name": "Abusive text classifier",
 	"version": "1.0",
 	"permissions": [
 		"contextMenus"
