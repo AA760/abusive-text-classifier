@@ -6,7 +6,7 @@ A client-server approach to censoring abusive text in your web browser.
 
 ## How it works
 
-***
+
 
 The approach is made up of 2 components:
 
@@ -25,8 +25,6 @@ For the system to work, the server application must be running and the browser e
 *On a test dataset sourced from Wikipedia forums which was separate from the training data. 
 
 ## Instructions
-
----
 
 Core requirements:
 
