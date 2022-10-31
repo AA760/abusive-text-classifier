@@ -18,7 +18,7 @@ For the system to work, the server application must be running and the browser e
 
 *On a test dataset sourced from Wikipedia forums which was separate from the training data. 
 
-## Usage Instructions
+## Usage instructions
 
 Core requirements:
 
